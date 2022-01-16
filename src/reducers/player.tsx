@@ -3,8 +3,9 @@ import { Index2D } from "../interfaces/dimension";
 export const SET_GAME_LEVEL = "SET_GAME_LEVEL" as const;
 export const SET_MINES = "SET_MINES" as const;
 export const SET_GAME_STATUS = "SET_GAME_STATUS" as const;
+export const SET_FLAG_CNT = "SET_FLAG_CNT" as const;
 export const UPDATE_FLAG_CNT = "UPDATE_FLAG_CNT" as const;
-export const RESET_GAME = "RESET_GAME" as const;
+export const RESET_MINES = "RESET_MINES" as const;
 
 export const setGameLevel = (level: string) => ({
   type: SET_GAME_LEVEL,
@@ -27,6 +28,13 @@ export const setGameStatus  = (gameStatus: string) => ({
   },
 });
 
+export const setFlagCnt = (flagCnt: number) => ({
+  type: SET_FLAG_CNT,
+  payload: {
+    flagCnt: flagCnt,
+  }
+})
+
 export const updateFlagCnt = (plus: boolean) => ({
   type: UPDATE_FLAG_CNT,
   payload: {
@@ -34,8 +42,8 @@ export const updateFlagCnt = (plus: boolean) => ({
   },
 });
 
-export const resetGame = () => ({
-  type: RESET_GAME,
+export const resetMines = () => ({
+  type: RESET_MINES,
 })
 
 
@@ -43,8 +51,9 @@ type PlayerAction =
   | ReturnType<typeof setGameLevel>
   | ReturnType<typeof setMines>
   | ReturnType<typeof setGameStatus>
+  | ReturnType<typeof setFlagCnt>
   | ReturnType<typeof updateFlagCnt>
-  | ReturnType<typeof resetGame>
+  | ReturnType<typeof resetMines>
 
 
 interface PlayerState {
@@ -117,26 +126,30 @@ const player = (state: PlayerState = initialState, action: PlayerAction) => {
         gameStatus: action.payload.gameStatus,
       }
     }
+    case SET_FLAG_CNT:{
+      return {
+        ...state,
+        flagCnt: action.payload.flagCnt
+      }
+    }
     case UPDATE_FLAG_CNT:{
-      let flagCnt = state.flagCnt;
+      let cp = state.flagCnt;
       if (action.payload.plus){
-        flagCnt ++;
+        cp++;
       } else{
-        flagCnt--;
+        cp--;
       }
       return {
         ...state,
-        flagCnt: flagCnt,
+        flagCnt: cp,
       }
     }
-    case RESET_GAME:{
+    case RESET_MINES:{
+      const cp = {...state.gameSetting};
+      cp.mines = [];
       return{
         ...state,
-        gameSetting: {
-          mines: []
-        },
-        gameStatus: "ready",
-        flagCnt: state.gameSetting.numMines,
+        gameSetting: cp,
       }
     }
     default:{

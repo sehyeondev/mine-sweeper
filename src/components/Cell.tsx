@@ -12,7 +12,10 @@ import { getNearIndex } from '../functions';
 export default function Cell ({cell})  {
   const dispatch = useDispatch();
   const { cells } = useSelector((state: RootState) => state.cell)
-  const { gameStatus } = useSelector((state: RootState) => state.player)
+  const { gameStatus, gameSetting } = useSelector((state: RootState) => state.player)
+  const numRows = gameSetting.numRows;
+  const numCols = gameSetting.numCols;
+  const numMines = gameSetting.numMines;
 
   const checkSuccess = (numRows: number, numCols: number, numMines: number) => {
     let remainder = numRows*numCols;
@@ -32,7 +35,7 @@ export default function Cell ({cell})  {
 
 
   const revealBlanks = (center: Index2D) => {
-    const nearIndex = getNearIndex(center, 9, 9);
+    const nearIndex = getNearIndex(center, numRows, numCols);
     nearIndex.forEach((posXY, index) => {
       const cell = cells[posXY.x][posXY.y];
       if (cell.revealed){
@@ -46,6 +49,8 @@ export default function Cell ({cell})  {
   }
 
   const onLeftClick = () => {
+    if (gameStatus === "fail" || gameStatus === "success") return;
+
     if (gameStatus === "ready") {
       dispatch(setGameStatus("started"))
     }
@@ -58,10 +63,11 @@ export default function Cell ({cell})  {
     if (cell.number === 0) {
       revealBlanks(cell.posXY);
     }
-    checkSuccess(9,9,10);
+    checkSuccess(numRows,numCols,numMines);
   }
 
   const onRightClick = (e: React.MouseEvent) => {
+    if (gameStatus != "started") return;
     e.preventDefault();
     if (!cell.revealed) {
       dispatch(updateFlagCnt(cell.flagged))

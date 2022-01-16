@@ -13,3 +13,4 @@ export const getNearIndex = (center: Index2D, numRows: number, numCols: number) 
   }
   return result;
 }
+

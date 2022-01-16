@@ -12,7 +12,8 @@ const makeStore = () => {
 
   const persistConfig = {
     key: 'nextjs',
-    whitelist: ['cell', 'player',],
+    whitelist: [],
+    blacklist: ['cell', 'player'],
     storage
   };
 
