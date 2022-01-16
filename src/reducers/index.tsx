@@ -1,10 +1,10 @@
 import { combineReducers } from "redux";
-import mine from "./mine";
+import cell from "./cell";
 import player from "./player";
 
 
 const appReducer = combineReducers({
-  mine,
+  cell,
   player,
 });
 

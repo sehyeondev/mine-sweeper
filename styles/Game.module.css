@@ -1,0 +1,73 @@
+.page {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameContainer {
+  text-align: center;
+  width: 50%;
+  border: solid;
+}
+
+.gameTopBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.flagCnt {
+  margin: 10px;
+}
+
+.startBtn {
+  padding: 3px;
+}
+
+.stopwatch {
+  margin: 10px;
+}
+
+.rowCell {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.cell {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: solid;
+  width: 50px;
+  height: 50px;
+}
+
+.cell .mine {
+  background-color: orange;
+  cursor: pointer;
+}
+
+.cell .number {
+  background-color: skyblue;
+}
+
+.cell .blank {
+  background-color: gray;
+}
+
+.revealed {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+}
+
+.hidden{
+  width: 100%;
+  height: 100%;
+  background-color: black;
+}

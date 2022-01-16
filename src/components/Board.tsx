@@ -1,98 +1,88 @@
+import styles from '../../styles/Game.module.css'
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../reducers';
-import { setMines } from '../reducers/mine';
 import Cell from './Cell';
-import MineCounter from './MineCounter';
-import StartBtn from './StartBtn';
-import Timer from './Timer';
-import Level from './Level';
+import { plusNumber, setCells, setIsMine } from '../reducers/cell';
+import { resetGame, setGameStatus, setMines } from '../reducers/player';
 import { CellInterface } from '../interfaces/cell';
-import {v4 as uuidv4} from 'uuid'
-import { resetGame, addCell, setGameLevel, updateCell } from '../reducers/player';
-
+import { Index2D } from '../interfaces/dimension';
+import { getNearIndex } from '../functions';
+import StopWatch from './Stopwatch'
 
 export default function Board () {
   const dispatch = useDispatch();
-  const { mines } = useSelector((state: RootState)=> state.mine)
-  const { gameSetting, cells } = useSelector((state: RootState)=> state.player)
+  const { cells } = useSelector((state: RootState)=> state.cell)
+  const { flagCnt, gameStatus } = useSelector((state: RootState) => state.player)
 
-  const createCells = (level: string) => {
-    dispatch(setGameLevel(level))
-    // let result: Array<Array<CellInterface>>;
-    // result = []
-    let numRows: number, numCols: number, numMines: number;
-    // determine numCells and numMines
-    switch (level) {
-      case "beginner":{
-        [numRows, numCols, numMines] = [9, 9, 10]
-        break;
-      }
-      case "intermediate":{
-        [numRows, numCols, numMines] = [16, 16, 40]
-        break;
-      }
-      case "expert":{
-        [numRows, numCols, numMines] = [16, 30, 99]
-        break;
-      }
-    }
-
-    // initialize cells
-    for (let i = 0; i < numRows; i++) {
-      // let rowCells = []
-      for (let j = 0; j < numCols; j ++) {
-        dispatch(addCell(i,j))
-        // rowCells.push({
-        //   uuid: uuidv4(),
-        //   type: "b",
-        //   status: "hidden",
-        //   posXY: [i,j],
-        //   nearMineCnt: 0,
-        // })
-      }
-      // result.push(rowCells)
-    }
-
-    // generate random mines
+  const createMines = (numRows: number, numCols: number, numMines: number) => {
+    let result = []
     let numCells = numRows*numCols;
-    const mineSet = new Set<number>();
+    const mineSet = new Set<number>(); // to avoid duplicates
+    
+    // generate random numbers as much as # of Mines [0, numCells -1]
     while (mineSet.size < numMines) {
       mineSet.add(Math.floor(Math.random() * numCells))
     }
-    console.log(mineSet)
-    console.log(numRows, numCols, numMines)
+    
+    // change cell state
     mineSet.forEach((mine) => {
-      // console.log(mine/9, mine%9)
-      // cells[Math.floor(mine/numCols)][mine%numCols].type="m"
-      dispatch(updateCell("type", "m", [Math.floor(mine/numCols),mine%numCols]))
+      const posXY = {x:Math.floor(mine/numCols), y:mine%numCols}
+      result.push(posXY)
+      dispatch(setIsMine(posXY));
     })
 
-    // return result
+    return result;
+  }
+
+  const createNumbers = (mines: Array<Index2D>) => {
+    // determine # of adjacent mines
+    mines.forEach((mine, index) => {
+      const nearIndex = getNearIndex(mine, 9, 9);
+      nearIndex.forEach((posXY, index) => {
+        dispatch(plusNumber(posXY));
+      })
+    })
   }
 
   useEffect(()=>{
-    dispatch(resetGame())
-    createCells("beginner")
-    // console.log(cells)
-    // dispatch(setMines(cells))
-  }, [])
+    if (gameStatus !== "ready") return;
+    // reset game first
+    dispatch(resetGame());
+
+    // initialize empty cells
+    const emptyCells = createCells();
+    dispatch(setCells(emptyCells));
+    
+    // set random mines
+    const randomMines = createMines(9,9,10);
+    dispatch(setMines(randomMines));
+
+    // set numbers near mines
+    createNumbers(randomMines);
+  }, [gameStatus])
+
+  const onStartBtnClick = () => {
+    if (gameStatus !== "ready") {
+      dispatch(setGameStatus("ready"));
+    }
+  }
   
 
   return (
-    <div style={{display: "flex", flexDirection: "row", justifyContent: "center",  alignItems: "center"}}>
-      <div style ={{border: "solid", width: "50%", textAlign: "center", }}>
-        <div style={{display: "flex", flexDirection: "row", justifyContent: "center",  alignItems: "center"}}>
-          <Level />
-          <MineCounter />
-          <StartBtn />
-          <Timer />
+    <div className={styles.page}>
+      <div className={styles.gameContainer}>
+        <div className={styles.gameTopBar}>
+          <div className={styles.flagCnt}>{flagCnt}</div>
+          <button className={styles.startBtn}
+            onClick={()=>onStartBtnClick()}> game {gameStatus} </button>
+          <StopWatch />
         </div>
-        {/* {
+        {
           cells.map((rowCells, index) => {
             return (
-              <div style={{display: "flex", flexDirection: "row", justifyContent: "center",  alignItems: "center"}} >
-                {              
+              <div className={styles.rowCell}>
+                {           
                   rowCells.map((cell, index) => 
                     <Cell cell={cell} />
                   )
@@ -100,8 +90,31 @@ export default function Board () {
               </div>
             )
           })
-        } */}
+        }
       </div>
     </div>
   )
+}
+
+const createCells = () => {
+  let numRows: number, numCols: number;
+  [numRows, numCols] = [9, 9];
+
+  let result = []
+  for (let i = 0; i < numRows; i++) {
+    let rowCells = []
+    for (let j = 0; j < numCols; j ++) {
+      rowCells.push(
+        {
+          posXY: {x:i, y:j},
+          isMine: false,
+          number: 0,
+          revealed: false,
+          flagged: false,
+        }
+      )
+    }
+    result.push(rowCells)
+  }
+  return result;
 }

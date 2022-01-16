@@ -1,6 +1,9 @@
+import { Index2D } from "./dimension";
+
 export interface CellInterface {
-  type: string;
-  status: string;
-  posXY;
-  nearMineCnt: number;
+  posXY: Index2D;
+  isMine: boolean;
+  number: number;
+  revealed: boolean;
+  flagged: boolean;
 }
