@@ -47,16 +47,16 @@
   height: 50px;
 }
 
-.cell .mine {
+.mine {
   background-color: orange;
   cursor: pointer;
 }
 
-.cell .number {
+.number {
   background-color: skyblue;
 }
 
-.cell .blank {
+.blank {
   background-color: gray;
 }
 

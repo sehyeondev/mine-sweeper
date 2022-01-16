@@ -1,8 +1,7 @@
 import styles from '../../styles/Game.module.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { flagCell, revealCell } from '../reducers/cell';
-import React from 'react';
-import { CellInterface } from '../interfaces/cell';
+import React, { useEffect } from 'react';
 import { setGameStatus, updateFlagCnt } from '../reducers/player';
 import { Index2D } from '../interfaces/dimension';
 import { RootState } from '../reducers';
@@ -16,6 +15,7 @@ export default function Cell ({cell})  {
   const numRows = gameSetting.numRows;
   const numCols = gameSetting.numCols;
   const numMines = gameSetting.numMines;
+  
 
   const checkSuccess = (numRows: number, numCols: number, numMines: number) => {
     let remainder = numRows*numCols;
@@ -76,7 +76,7 @@ export default function Cell ({cell})  {
   }
  
   return (
-    <div className={styles.cell}
+    <div className={`${styles.cell}`}
       onClick={() => onLeftClick()}
       onContextMenu={(e) => onRightClick(e)}>
         {
@@ -113,7 +113,6 @@ export default function Cell ({cell})  {
             }
           </div>
         }
-        
     </div>
   )
 }

@@ -6,7 +6,7 @@ import { useStopwatch } from "react-timer-hook"
 import { useEffect } from "react";
 
 export function Stopwatch () {
-  const { seconds, reset, pause } = useStopwatch({autoStart: false});
+  const { seconds, minutes, hours, reset, pause } = useStopwatch({autoStart: false});
   const { gameStatus } = useSelector((state: RootState) => state.player)
 
   useEffect(() => {
@@ -22,8 +22,15 @@ export function Stopwatch () {
 
   return (
     <div className={styles.stopwatch}>
-      {seconds}
+      {hours}:{minutes}:{seconds}
     </div>
+  )
+}
+
+export function FlagCounter () {
+  const { flagCnt } = useSelector((state: RootState)=> state.player)
+  return (
+    <div className={styles.flagCnt}>{flagCnt}</div>
   )
 }
 

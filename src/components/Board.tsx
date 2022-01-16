@@ -1,24 +1,44 @@
 import styles from '../../styles/Game.module.css'
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Index2D } from "../interfaces/dimension";
 import { RootState } from '../reducers';
+import { setCells, plusNumber,  setIsMine, revealCell } from '../reducers/cell';
+import { resetMines, setFlagCnt, setMines } from '../reducers/player';
 import Cell from './Cell';
-import { plusNumber, setCells, setIsMine } from '../reducers/cell';
-import { resetMines, setFlagCnt, setGameStatus, setMines } from '../reducers/player';
-import { CellInterface } from '../interfaces/cell';
-import { Index2D } from '../interfaces/dimension';
+import { Level, Stopwatch, StartBtn, FlagCounter } from './GameSetting'
 import { getNearIndex } from '../functions';
-import { Level, Stopwatch, StartBtn } from './GameSetting'
 
 export default function Board () {
   const dispatch = useDispatch();
   const { cells } = useSelector((state: RootState)=> state.cell)
-  const { flagCnt, gameStatus, gameSetting } = useSelector((state: RootState) => state.player)
+  const { gameStatus, gameSetting } = useSelector((state: RootState) => state.player)
   const numRows = gameSetting.numRows;
   const numCols = gameSetting.numCols;
   const numMines = gameSetting.numMines;
 
-  const createMines = (numRows: number, numCols: number, numMines: number) => {
+  
+  function createCells (numRows: number, numCols: number) {
+    let result = []
+    for (let i = 0; i < numRows; i++) {
+      let rowCells = []
+      for (let j = 0; j < numCols; j ++) {
+        rowCells.push(
+          {
+            posXY: {x:i, y:j},
+            isMine: false,
+            number: 0,
+            revealed: false,
+            flagged: false,
+          }
+        )
+      }
+      result.push(rowCells)
+    }
+    return result;
+  }
+
+  function createMines (numRows: number, numCols: number, numMines: number)  {
     let result = []
     let numCells = numRows*numCols;
     const mineSet = new Set<number>(); // to avoid duplicates
@@ -38,7 +58,10 @@ export default function Board () {
     return result;
   }
 
-  const createNumbers = (mines: Array<Index2D>) => {
+  function createNumbers  (mines: Array<Index2D>) {
+    const numRows = gameSetting.numRows;
+    const numCols = gameSetting.numCols;
+    const numMines = gameSetting.numMines;
     // determine # of adjacent mines
     mines.forEach((mine, index) => {
       const nearIndex = getNearIndex(mine, numRows, numCols);
@@ -66,12 +89,22 @@ export default function Board () {
     createNumbers(randomMines);
   }, [gameStatus, gameSetting.level])
 
+  useEffect(() => {
+    if (gameStatus === "fail") {
+      cells.forEach((rowCell, index) => {
+        rowCell.forEach((cell, index) => {
+          dispatch(revealCell(cell.posXY));
+        })
+      })
+    }
+  }, [gameStatus])
+
   return (
     <div className={styles.page}>
       <div className={styles.gameContainer}>
         <div className={styles.gameTopBar}>
           <Level />
-          <div className={styles.flagCnt}>{flagCnt}</div>
+          <FlagCounter />
           <StartBtn />
           <Stopwatch />
         </div>
@@ -91,24 +124,4 @@ export default function Board () {
       </div>
     </div>
   )
-}
-
-const createCells = (numRows: number, numCols: number) => {
-  let result = []
-  for (let i = 0; i < numRows; i++) {
-    let rowCells = []
-    for (let j = 0; j < numCols; j ++) {
-      rowCells.push(
-        {
-          posXY: {x:i, y:j},
-          isMine: false,
-          number: 0,
-          revealed: false,
-          flagged: false,
-        }
-      )
-    }
-    result.push(rowCells)
-  }
-  return result;
 }

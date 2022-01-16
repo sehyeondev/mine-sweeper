@@ -1,6 +1,6 @@
 import { Index2D } from "./interfaces/dimension";
 
-export const getNearIndex = (center: Index2D, numRows: number, numCols: number) => {
+export function getNearIndex (center: Index2D, numRows: number, numCols: number) {
   let result: Array<Index2D> = [];
   for (let i = -1; i < 2; i++) {
     for (let j = -1; j < 2; j++) {
@@ -13,4 +13,3 @@ export const getNearIndex = (center: Index2D, numRows: number, numCols: number) 
   }
   return result;
 }
-
