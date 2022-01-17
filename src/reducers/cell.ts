@@ -6,6 +6,7 @@ export const SET_IS_MINE = "SET_IS_MINE" as const;
 export const PLUS_NUMBER = "PLUS_NUMBER" as const;
 export const REVEAL_CELL = "REVEAL_CELL" as const;
 export const FLAG_CELL = "FLAG_CELL" as const;
+export const KILL_CELL = "KILL_CELL" as const;
 
 export const setCells = (cells: Array<Array<CellInterface>>) => ({
   type: SET_CELLS,
@@ -43,6 +44,13 @@ export const flagCell = (posXY: Index2D, flagged: boolean) => ({
   }
 })
 
+export const killCell = (posXY: Index2D) => ({
+  type: KILL_CELL,
+  payload: {
+    posXY: posXY,
+  }
+})
+
 
 type CellAction = 
   | ReturnType<typeof setCells>
@@ -50,6 +58,7 @@ type CellAction =
   | ReturnType<typeof flagCell>
   | ReturnType<typeof plusNumber>
   | ReturnType<typeof setIsMine>
+  | ReturnType<typeof killCell>
 
 interface CellState {
   cells: Array<Array<CellInterface>>
@@ -105,6 +114,17 @@ const cell = (state: CellState = initialState, action: CellAction) => {
       let y = action.payload.posXY.y;
       const cp = [...state.cells]
       cp[x][y].flagged = action.payload.flagged;
+      return{
+        ...state,
+        cells: cp,
+      }
+    }
+
+    case KILL_CELL:{
+      let x = action.payload.posXY.x;
+      let y = action.payload.posXY.y;
+      const cp = [...state.cells]
+      cp[x][y].number = -44;
       return{
         ...state,
         cells: cp,
