@@ -20,6 +20,22 @@ export default function Board () {
   const numMines = gameSetting.numMines;
 
   useEffect(()=>{
+    // when game started, reset game
+    // reset mines first
+    dispatch(resetMines());
+    dispatch(setFlagCnt(numMines));
+
+    // initialize empty cells
+    const emptyCells = createCells(numRows, numCols);
+    dispatch(setCells(emptyCells));
+    
+  }, [])
+  
+  useEffect(() => {
+    dispatch(setGameStatus("ready"))
+  }, [gameSetting.level])
+
+  useEffect(()=>{
     // when game over, reveal all cells
     if (gameStatus === "fail") {
       cells.forEach((rowCell, index) => {
@@ -35,14 +51,12 @@ export default function Board () {
       dispatch(setFlagCnt(numMines));
 
       // initialize empty cells
-      const emptyCells = createCells(numRows, numCols);
+      const emptyCells = createCells(gameSetting.numRows, gameSetting.numCols);
       dispatch(setCells(emptyCells));
     }
-  }, [gameStatus])
+  }, [gameStatus, gameSetting.level])
 
-  useEffect(() => {
-    dispatch(setGameStatus("ready"))
-  }, [gameSetting.level])
+  
 
 
   return (
