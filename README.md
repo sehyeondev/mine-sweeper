@@ -20,9 +20,9 @@ classnames
 
 ## Game Explanation
 1. Select level (beginner, intermediate, expert)
-  - beginner: 10 mines in 9x9 board
-  - intermediate: 40 mines in 16x16 board
-  - expert: 99 mines in 16x30 board
+   - beginner: 10 mines in 9x9 board
+   - intermediate: 40 mines in 16x16 board
+   - expert: 99 mines in 16x30 board
 2. To start the game, left click one cell you want.
 3. To flag the cell, right click.
 4. To reveal the cell, left click.
