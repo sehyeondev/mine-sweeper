@@ -2,13 +2,13 @@ import styles from '../../styles/Game.module.css'
 import classNames from 'classnames/bind'
 import { useDispatch, useSelector } from 'react-redux';
 import React from 'react';
+import { Index2D } from '../interfaces/dimension';
+import { CellInterface } from '../interfaces/cell';
+import { RootState } from '../reducers';
 import { setGameStatus, updateFlagCnt } from '../reducers/player';
 import { killCell, flagCell, plusNumber,  setIsMine, revealCell } from '../reducers/cell';
 import { setMines } from '../reducers/player';
-import { Index2D } from '../interfaces/dimension';
-import { RootState } from '../reducers';
 import { getNearIndex } from '../functions';
-import { CellInterface } from '../interfaces/cell';
 
 const cx = classNames.bind(styles);
 
