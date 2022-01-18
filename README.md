@@ -1,5 +1,6 @@
 Ringle Frontend Assignment 2-2
 Minesweeper
+https://mine-sweeper-liard.vercel.app/
 
 ## Getting Started
 
