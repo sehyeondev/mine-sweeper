@@ -26,8 +26,8 @@ classnames
 2. Game Status will be displayed in the button above the board.
    - game ready: not started
    - game started: ongoing
-   - game succes: reveal all cells that are not mines
-   - game fail: left click a mine
+   - game succes: cells that are not mines are all reavealed
+   - game fail: a mine is left clicked
 3. To start the game, left click one cell you want.
 4. To flag the cell, right click.
 5. To reveal the cell, left click.
