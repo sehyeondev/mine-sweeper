@@ -31,5 +31,6 @@ classnames
    - game fail: a mine is left clicked
 3. To start the game, left click one cell you want.
 4. To flag the cell, right click.
+   - flagged cell is shown in green
 5. To reveal the cell, left click.
 6. If you want to start new game, click the button.
