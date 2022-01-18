@@ -91,10 +91,6 @@ const player = (state: PlayerState = initialState, action: PlayerAction) => {
       switch (action.payload.level) {
         case "beginner":{
           [cp.numRows, cp.numCols, cp.numMines, flagCnt] = [9,9,10,10]
-          // cp.numRows = 9;
-          // cp.numCols = 9;
-          // cp.numMines = 10;
-          // flagCnt = 10;0
           break;
         }
         case "intermediate":{

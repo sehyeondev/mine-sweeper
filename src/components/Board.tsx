@@ -1,13 +1,11 @@
 import styles from '../../styles/Game.module.css'
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Index2D } from "../interfaces/dimension";
 import { RootState } from '../reducers';
-import { setCells, plusNumber,  setIsMine, revealCell } from '../reducers/cell';
-import { resetMines, setFlagCnt, setGameStatus, setMines } from '../reducers/player';
+import { setCells, revealCell } from '../reducers/cell';
+import { resetMines, setFlagCnt, setGameStatus } from '../reducers/player';
 import Cell from './Cell';
 import { Level, Stopwatch, StartBtn, FlagCounter } from './GameSetting'
-import { getNearIndex } from '../functions';
 import { createCells } from '../functions';
 
 
@@ -38,6 +36,11 @@ export default function Board () {
   useEffect(()=>{
     // when game over, reveal all cells
     if (gameStatus === "fail") {
+      // gameSetting.mines.forEach((posXY, index) => {
+      //   if (!cells[posXY.x][posXY.y].flagged){
+      //     dispatch(revealCell(posXY))
+      //   } 
+      // })
       cells.forEach((rowCell, index) => {
         rowCell.forEach((cell, index) => {
           dispatch(revealCell(cell.posXY));
@@ -55,9 +58,6 @@ export default function Board () {
       dispatch(setCells(emptyCells));
     }
   }, [gameStatus, gameSetting.level])
-
-  
-
 
   return (
     <div className={styles.page}>

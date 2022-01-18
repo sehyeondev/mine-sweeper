@@ -1,18 +1,18 @@
 import styles from '../../styles/Game.module.css'
 import classNames from 'classnames/bind'
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { setGameStatus, updateFlagCnt } from '../reducers/player';
-import { killCell, flagCell, setCells, plusNumber,  setIsMine, revealCell } from '../reducers/cell';
-import { resetMines, setFlagCnt, setMines } from '../reducers/player';
+import { killCell, flagCell, plusNumber,  setIsMine, revealCell } from '../reducers/cell';
+import { setMines } from '../reducers/player';
 import { Index2D } from '../interfaces/dimension';
 import { RootState } from '../reducers';
 import { getNearIndex } from '../functions';
-import { createCells } from '../functions';
+import { CellInterface } from '../interfaces/cell';
 
 const cx = classNames.bind(styles);
 
-export default function Cell ({cell})  {
+const Cell: React.FC<{cell: CellInterface}> = ({cell}) => {
   const dispatch = useDispatch();
   const { cells } = useSelector((state: RootState) => state.cell)
   const { gameStatus, gameSetting } = useSelector((state: RootState) => state.player)
@@ -70,8 +70,6 @@ export default function Cell ({cell})  {
     if (remainder === numMines) {
       dispatch(setGameStatus("success"))
     }
-    console.log("im in check success")
-    console.log(remainder)
   }
 
 
@@ -79,7 +77,7 @@ export default function Cell ({cell})  {
     const nearIndex = getNearIndex(center, numRows, numCols);
     nearIndex.forEach((posXY, index) => {
       const cell = cells[posXY.x][posXY.y];
-      if (cell.revealed){
+      if (cell.revealed || cell.flagged){
         return;
       }
       dispatch(revealCell(posXY));
@@ -90,7 +88,7 @@ export default function Cell ({cell})  {
   }
 
   const onLeftClick = () => {
-    if (gameStatus === "fail" || gameStatus === "success") return;
+    if (gameStatus === "fail" || gameStatus === "success" || cell.flagged) return;
 
     if (gameStatus === "ready") {
       dispatch(setGameStatus("started"))
@@ -131,14 +129,6 @@ export default function Cell ({cell})  {
     <div className={cx('cell')}
       onClick={() => onLeftClick()}
       onContextMenu={(e) => onRightClick(e)}>
-        {/* <div className={cx({
-          hidden: !cell.revealed,
-          revealed: cell.revealed,
-          number: cell.number >0,
-          mine: cell.isMine,
-          blank: cell.number === 0,
-        })}></div> */}
-        
             {
               ((cell.isMine)) && 
               <div className={cx( 'mine', {
@@ -154,7 +144,6 @@ export default function Cell ({cell})  {
               <div className={cx( 'number', {
                 hidden: !cell.revealed,
                 flagged: cell.flagged,
-                dead: cell.number === -44,
               })}>
                 {cell.number}
               </div>
@@ -164,29 +153,11 @@ export default function Cell ({cell})  {
               <div className={cx( 'blank', {
                 hidden: !cell.revealed,
                 flagged: cell.flagged,
-                dead: cell.number === -44,
               })}>
-
               </div>
             }
-        
-        {/* {
-          ((cell.revealed)) &&
-          <div className={styles.revealed}>
-            {
-              ((cell.isMine)) && 
-              <div className={styles.mine}>X</div>
-            }
-            {
-              ((cell.number>0) && !(cell.isMine)) && 
-              <div className={styles.number}>{cell.number}</div>
-            }
-            {
-              ((cell.number==0) && !(cell.isMine)) && 
-              <div className={styles.blank}></div>
-            }
-          </div>
-        } */}
     </div>
   )
 }
+
+export default Cell
