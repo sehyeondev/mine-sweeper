@@ -36,11 +36,6 @@ export default function Board () {
   useEffect(()=>{
     // when game over, reveal all cells
     if (gameStatus === "fail") {
-      // gameSetting.mines.forEach((posXY, index) => {
-      //   if (!cells[posXY.x][posXY.y].flagged){
-      //     dispatch(revealCell(posXY))
-      //   } 
-      // })
       cells.forEach((rowCell, index) => {
         rowCell.forEach((cell, index) => {
           dispatch(revealCell(cell.posXY));
