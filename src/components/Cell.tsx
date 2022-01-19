@@ -99,7 +99,7 @@ const Cell: React.FC<{cell: CellInterface}> = ({cell}) => {
       createNumbers(randomMines);
     }
 
-    // if clicked cell is mine, game over
+    // if clicked cell is a mine, game over
     if(cell.isMine) {
       dispatch(killCell(cell.posXY))
       dispatch(setGameStatus("fail"))
@@ -118,7 +118,7 @@ const Cell: React.FC<{cell: CellInterface}> = ({cell}) => {
   const onRightClick = (e: React.MouseEvent) => {
     if (gameStatus != "started") return;
     e.preventDefault();
-    // update plus or minus one to flagCnt
+    // plus or minus one to flagCnt
     if (!cell.revealed) {
       dispatch(updateFlagCnt(cell.flagged))
       dispatch(flagCell(cell.posXY, !cell.flagged))
